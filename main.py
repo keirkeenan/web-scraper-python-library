@@ -108,9 +108,102 @@ def compare(product_name):
     else:
         print("Best Buy has the lowest price.")
 
-'''
-Example usage:
-compare('iPhone 13')
-'''
+# retrieves customer reviews for a product from a given website
+def get_product_reviews(product_name, url):
+    # determine the site and call the appropriate function to scrape the review data
+    if 'amazon' in url:
+        html = get_html(url)
+        review_data = parse_amazon_reviews(html)
+    elif 'walmart' in url:
+        html = get_html(url)
+        review_data = parse_walmart_reviews(html)
+    elif 'bestbuy' in url:
+        html = get_html(url)
+        review_data = parse_bestbuy_reviews(html)
+    else:
+        print(f"Unsupported URL: {url}")
+        review_data = {}
+    
+    # add the site name and product name to the review data and return as a DataFrame
+    review_data['site'] = url.split('.')[1]
+    review_data['product'] = product_name
+    review_df = pd.DataFrame(review_data)
+    return review_df
+
+# retrieves a list of related products for a given product from a given website
+def get_related_products(product_name, url):
+    # determine the site and call the appropriate function to scrape the related product data
+    if 'amazon' in url:
+        html = get_html(url)
+        related_data = parse_amazon_related(html)
+    elif 'walmart' in url:
+        html = get_html(url)
+        related_data = parse_walmart_related(html)
+    elif 'bestbuy' in url:
+        html = get_html(url)
+        related_data = parse_bestbuy_related(html)
+    else:
+        print(f"Unsupported URL: {url}")
+        related_data = {}
+    
+    # add the site name and product name to the related product data and return as a DataFrame
+    related_data['site'] = url.split('.')[1]
+    related_data['product'] = product_name
+    related_df = pd.DataFrame(related_data)
+    return related_df
+
+# retrieves the availability of a product for a given website
+def get_product_availability(product_name, url):
+    # determine the site and call the appropriate function to scrape the store availability data
+    if 'amazon' in url:
+        availability_data = {}
+    elif 'walmart' in url:
+        html = get_html(url)
+        availability_data = parse_walmart_availability(html)
+    elif 'bestbuy' in url:
+        html = get_html(url)
+        availability_data = parse_bestbuy_availability(html)
+    else:
+        print(f"Unsupported URL: {url}")
+        availability_data = {}
+    
+    # add the site name and product name to the store availability data and return as a DataFrame
+    availability_data['site'] = url.split('.')[1]
+    availability_data['product'] = product_name
+    availability_df = pd.DataFrame([availability_data])
+    return availability_df
+
+
+# Tests
+def main():
+    # test the scrape_product function
+    amazon_data = scrape_product('iPhone 13', 'https://www.amazon.com/s?k=iPhone+13')
+    print(amazon_data)
+    walmart_data = scrape_product('iPhone 13', 'https://www.walmart.com/search?q=iPhone+13')
+    print(walmart_data)
+    bestbuy_data = scrape_product('iPhone 13', 'https://www.bestbuy.com/site/searchpage.jsp?st=iPhone+13')
+    print(bestbuy_data)
+    
+    # test the compare function
+    compare('iPhone 13')
+    '''
+    This will scrape the product data for the iPhone 13 on Amazon, Walmart, and Best Buy, extract the price data, print the prices for each site, and determine which site has the lowest price. 
+    NOTE: This function assumes that the first search result on each site corresponds to the desired product. Since this may not always be the case, we will want to modify the code in future updates.
+    '''
+
+    # test usage of `get_product_reviews`
+    amazon_reviews = get_product_reviews('iPhone 13', 'https://www.amazon.com/dp/B09G9P3WVR')
+    print(amazon_reviews.head())
+
+    # test usage of `get_related_products`
+    walmart_related = get_related_products('Apple Watch Series 7', 'https://www.walmart.com/ip/Apple-Watch-Series-7-GPS-41mm-Product-RED-Aluminum-Case-with-PRODUCT-RED-Sport-Band/657943300')
+    print(walmart_related.head())
+
+    # test usage of `get_product_availability`
+    bestbuy_availability = get_product_availability('Nintendo Switch OLED', 'https://www.bestbuy.com/site/nintendo-switch-oled-model-blue-yellow-red/6471322.p?skuId=6471322')
+    print(bestbuy_availability)
+
+if __name__ == '__main__':
+    main()
 
 
