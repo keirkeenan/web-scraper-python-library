@@ -1,209 +1,326 @@
+# disable the following pylint warnings:
+# pylint: disable=missing-module-docstring,
+# pylint: disable=pointless-string-statement,
+# pylint: disable=missing-function-docstring
+# pylint: disable=no-else-return
+
+import json
+import datetime
+import random
+import time
 import requests
-import pandas as pd
-from selenium import webdriver
 from bs4 import BeautifulSoup
 
-# performs an HTTP request to retrieve the HTML content of a given URL
-def get_html(url):
-    response = requests.get(url)
-    html = response.content
-    return html
 
-# spins up a local browser to load a given URL
-def open_browser(url):
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    driver = webdriver.Chrome(options=options)
-    driver.get(url)
-    return driver.page_source
+'''This function gets the html from the website'''
 
-# parse a single page of HTML content and extracts relevant product information from Amazon, Walmart, and Best Buy
-def parse_amazon(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    title = soup.find('span', {'id': 'productTitle'}).text.strip()
-    price = soup.find('span', {'class': 'a-price-whole'}).text.strip()
-    rating = soup.find('span', {'class': 'a-icon-alt'}).text.strip()
-    reviews = soup.find('span', {'id': 'acrCustomerReviewText'}).text.strip()
-    product_data = {
-        'title': title,
-        'price': price,
-        'rating': rating,
-        'reviews': reviews
-    }
-    return product_data
 
-def parse_walmart(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    title = soup.find('h1', {'class': 'prod-ProductTitle'}).text.strip()
-    price = soup.find('span', {'class': 'price-characteristic'}).text.strip()
-    rating = soup.find('span', {'class': 'seo-avg-rating'}).text.strip()
-    reviews = soup.find('span', {'class': 'seo-review-count'}).text.strip()
-    product_data = {
-        'title': title,
-        'price': price,
-        'rating': rating,
-        'reviews': reviews
-    }
-    return product_data
+def get_html(company_name, product_name, page_number):
+    if company_name == "ebay":
+        # build the url
+        url_product = f"https://www.ebay.com/sch/i.html?_from=R40&_nkw={product_name}"
+        url_page = f"&_sacat=0&_pgn={page_number}"
+        url = url_product + url_page
 
-def parse_bestbuy(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    title = soup.find('h1', {'class': 'heading-5 v-fw-regular'}).text.strip()
-    price = soup.find('div', {'class': 'priceView-hero-price priceView-customer-price'}).text.strip()
-    rating = soup.find('div', {'class': 'ugc-c-review-average'}).text.strip()
-    reviews = soup.find('span', {'class': 'c-review-average'}).text.strip()
-    product_data = {
-        'title': title,
-        'price': price,
-        'rating': rating,
-        'reviews': reviews
-    }
-    return product_data
+        # download the html
+        req = requests.get(url)
+        html = req.text
 
-# combines the previous helper functions to scrape a single page of product data and returns the data as a pandas dataframe
-def scrape_product(sku, url):
-    html = get_html(url)
-    product_data = parse_html(html)
-    df = pd.DataFrame(product_data)
-    return df
+        return html
 
-# scrapes multiple products given a list of product information and a URL template. The URL template should contain placeholders for the product information (e.g. {sku} or {product_name}) that can be replaced with the actual values
-def scrape_multiple_products(product_list, url_template):
-    dfs = []
-    for product in product_list:
-        url = url_template.format(**product)
-        df = scrape_product(product['sku'], url)
-        dfs.append(df)
-    combined_df = pd.concat(dfs, ignore_index=True)
-    return combined_df
+    elif company_name == "walmart":
+        # build the url
+        url_product = f"https: // www.walmart.com / search?q = {product_name}"
+        url_page = f"&page={page_number}&affinityOverride=default"
+        url = url_product + url_page
+        ac1 = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
+        ac2 = "image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+        acc = ac1 + ac2
+        user_agent1 = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        user_agent2 = "(KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+        user_agent = user_agent1 + user_agent2
+        headers = {
+            "Referer": "https://www.google.com",
+            "Connection": "Keep-Alive",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept": acc,
+            "User-Agent": user_agent,
+        }
 
-# compares the price across Amazon, Walmart, and Best Buy
-def compare(product_name):
-    # define the URLs for the product on each site
-    amazon_url = f'https://www.amazon.com/s?k={product_name}'
-    walmart_url = f'https://www.walmart.com/search?q={product_name}'
-    bestbuy_url = f'https://www.bestbuy.com/site/searchpage.jsp?st={product_name}'
-    
-    # scrape the product data from each site
-    amazon_data = scrape_product(product_name, amazon_url)
-    walmart_data = scrape_product(product_name, walmart_url)
-    bestbuy_data = scrape_product(product_name, bestbuy_url)
-    
-    # extract the price data from each site's data
-    amazon_price = float(amazon_data.loc[0, 'price'].replace('$', ''))
-    walmart_price = float(walmart_data.loc[0, 'price'].replace('$', ''))
-    bestbuy_price = float(bestbuy_data.loc[0, 'price'].replace('$', ''))
-    
-    # print the price data for each site
-    print(f"Amazon: ${amazon_price:.2f}")
-    print(f"Walmart: ${walmart_price:.2f}")
-    print(f"Best Buy: ${bestbuy_price:.2f}")
-    
-    # determine which site has the lowest price
-    lowest_price = min(amazon_price, walmart_price, bestbuy_price)
-    if lowest_price == amazon_price:
-        print("Amazon has the lowest price.")
-    elif lowest_price == walmart_price:
-        print("Walmart has the lowest price.")
+        # download the html
+        req = requests.get(url, headers=headers)
+        html = req.text
+
+        return html
+
+    elif company_name == "amazon":
+        # build the url
+        url = f"https://www.amazon.com/s?k={product_name}&page={page_number}"
+        ac1 = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
+        ac2 = "image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+        acc = ac1 + ac2
+        user_agent1 = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        user_agent2 = "(KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+        user_agent = user_agent1 + user_agent2
+        headers = {
+            "Referer": "https://www.google.com",
+            "Connection": "Keep-Alive",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept": acc,
+            "User-Agent": user_agent,
+        }
+
+        # download the html
+        req = requests.get(url, headers=headers)
+        html = req.text
+
+        return html
+
     else:
-        print("Best Buy has the lowest price.")
+        return "Something went wrong. Please try again."
 
-# retrieves customer reviews for a product from a given website
-def get_product_reviews(product_name, url):
-    # determine the site and call the appropriate function to scrape the review data
-    if 'amazon' in url:
-        html = get_html(url)
-        review_data = parse_amazon_reviews(html)
-    elif 'walmart' in url:
-        html = get_html(url)
-        review_data = parse_walmart_reviews(html)
-    elif 'bestbuy' in url:
-        html = get_html(url)
-        review_data = parse_bestbuy_reviews(html)
+
+'''This is the parse_itemprice function that will parse the price of the item'''
+
+
+def parse_itemprice(text):
+    start = 0
+    end = 0
+    price_str = ""
+    text = text.replace(",", "")
+    start = text.find("$")
+    end = text.find(".")
+    price_str = text[start + 1: end]
+    price_str += text[end: end + 3]
+    price = float(price_str)
+    return price
+
+
+'''eBay web scraper'''
+
+
+def scrape_ebay(product_name):
+    items = []
+
+    # loop over the eBay webpages (3 pages)
+    for page_number in range(1, 4):
+        # random sleep
+        time.sleep(random.randint(1, 6))
+
+        # get the html & process it
+        soup = BeautifulSoup(
+            get_html(
+                "ebay",
+                product_name,
+                page_number),
+            "html.parser")
+
+        # loop over the items in the page
+        tags_items = soup.select(".s-item")
+        for tag_item in tags_items:
+            name = None
+            for tag in tag_item.select(".s-item__title"):
+                name = tag.text
+
+            price = None
+            for tag in tag_item.select(".s-item__price"):
+                price = parse_itemprice(tag.text)
+
+            status = None
+            for tag in tag_item.select(".s-item__subtitle"):
+                status = tag.text
+
+            item = {
+                "name": name,
+                "price": price,
+                "status": status,
+                "extraction_date": datetime.datetime.now().strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                ),
+            }
+            items.append(item)
+
+        # print(f'Total Items on page {page_number}/3: {len(tags_items)}')
+
+    # write the json to a file
+    product = product_name.replace(" ", "_")
+    filename_json = f"{product}_ebay_{datetime.date.today()}.json"
+    with open(filename_json, "w", encoding="ascii") as file:
+        file.write(json.dumps(items, indent=2))
+
+    """
+    # write the html to a file
+    filename_html = f'{product}_ebay_{datetime.date.today()}.json'
+    with open(filename_html, 'w', encoding='ascii') as file:
+        file.write(str(soup.prettify()))
+    """
+
+    # Check if the file is a valid JSON file
+    try:
+        with open(filename_json, "r", encoding="ascii") as file:
+            json.load(file)
+        return "eBay Scraper Success!"
+    except json.JSONDecodeError:
+        return "Failed to create JSON file for eBay data."
+
+
+'''Walmart web scraper'''
+
+
+def scrape_walmart(product_name):
+    items = []
+
+    # loop over the Walmart webpages (3 pages)
+    for page_number in range(1, 4):
+        # random sleep
+        random_sleep = random.randint(1, 6)
+        time.sleep(random_sleep)
+
+        # get the html
+        html = get_html("walmart", product_name, page_number)
+
+        # process the html
+        soup = BeautifulSoup(html, "html.parser")
+
+        # loop over the items in the page
+        products = soup.find_all(
+            "div", class_="mb1 ph1 pa0-xl bb b--near-white w-25")
+
+        for product in products:
+            try:
+                name = product.find(
+                    "span", class_="normal dark-gray mb0 mt1 lh-title f6 f5-l"
+                ).text
+            except AttributeError:
+                name = None
+            try:
+                price = product.find("div",
+                                     {"data-automation-id": "product-price"})
+                price = price.find("span", class_="w_iUH7").text
+                price = parse_itemprice(price)
+            except AttributeError:
+                price = None
+
+            item = {
+                "name": name,
+                "price": price,
+                "extraction_date": datetime.datetime.now().strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                ),
+            }
+            items.append(item)
+
+        # print(f'Total Items on page {page_number}/3: {len(products)}')
+
+    # write the json to a file
+    product = product_name.replace(" ", "_")
+    filename_json = f"{product}_walmart_{datetime.date.today()}.json"
+    with open(filename_json, "w", encoding="ascii") as file:
+        file.write(json.dumps(items, indent=2))
+
+    """
+    # write the html to a file
+    filename_html = f'{product_name}_walmart_{datetime.date.today()}.html'
+    with open(filename_html, "w") as f:
+        f.write(str(soup.prettify()))
+    """
+
+    # Check if the file is a valid JSON file
+    try:
+        with open(filename_json, "r", encoding="ascii") as file:
+            json.load(file)
+        return "Walmart Scraper Success!"
+    except json.JSONDecodeError:
+        return "Failed to create JSON file for Walmart data."
+
+
+'''Amazon web scraper'''
+
+
+def scrape_amazon(product_name):
+    items = []
+
+    # loop over the Amazon webpages (3 pages)
+    for page_number in range(1, 4):
+        # random sleep
+        random_sleep = random.randint(1, 6)
+        time.sleep(random_sleep)
+
+        # get the html
+        html = get_html("amazon", product_name, page_number)
+
+        # process the html
+        soup = BeautifulSoup(html, "html.parser")
+
+        # loop over the items in the page
+        products = soup.find_all(
+            "div",
+            class_="a-section a-spacing-small puis-padding-left-small puis-padding-right-small",
+        )
+
+        for product in products:
+            try:
+                name = product.find(
+                    "span", class_="a-size-base-plus a-color-base a-text-normal").text
+            except AttributeError:
+                name = None
+            try:
+                price = (
+                    product.find_all(
+                        "span", {"class": "a-price", "data-a-color": "base"}
+                    )[0]
+                    .find("span", class_="a-offscreen")
+                    .text
+                )
+                price = parse_itemprice(price)
+            except AttributeError:
+                price = None
+
+            item = {
+                "name": name,
+                "price": price,
+                "extraction_date": datetime.datetime.now().strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                ),
+            }
+            items.append(item)
+
+        # print(f'Total Items on page {page_number}/3: {len(products)}')
+
+    # write the json to a file
+    product = product_name.replace(" ", "_")
+    filename_json = f"{product}_amazon_{datetime.date.today()}.json"
+    with open(filename_json, "w", encoding="ascii") as file:
+        file.write(json.dumps(items, indent=2))
+
+    """
+    # write the html to a file
+    filename_html = f'{product_name}_amazon_{datetime.date.today()}.html'
+    with open(filename_html, "w") as f:
+        f.write(str(soup.prettify()))
+    """
+
+    # Check if the file is a valid JSON file
+    try:
+        with open(filename_json, "r", encoding="ascii") as file:
+            json.load(file)
+        return "Amazon Scraper Success!"
+    except json.JSONDecodeError:
+        return "Failed to create JSON file for Amazon data."
+
+
+'''Main function that takes in the product name and company name'''
+
+
+def main(product_name, company_name):
+    # scrape the websites
+    if company_name.lower() == "ebay":
+        return scrape_ebay(product_name)
+    elif company_name.lower() == "walmart":
+        return scrape_walmart(product_name)
+    elif company_name.lower() == "amazon":
+        return scrape_amazon(product_name)
     else:
-        print(f"Unsupported URL: {url}")
-        review_data = {}
-    
-    # add the site name and product name to the review data and return as a DataFrame
-    review_data['site'] = url.split('.')[1]
-    review_data['product'] = product_name
-    review_df = pd.DataFrame(review_data)
-    return review_df
-
-# retrieves a list of related products for a given product from a given website
-def get_related_products(product_name, url):
-    # determine the site and call the appropriate function to scrape the related product data
-    if 'amazon' in url:
-        html = get_html(url)
-        related_data = parse_amazon_related(html)
-    elif 'walmart' in url:
-        html = get_html(url)
-        related_data = parse_walmart_related(html)
-    elif 'bestbuy' in url:
-        html = get_html(url)
-        related_data = parse_bestbuy_related(html)
-    else:
-        print(f"Unsupported URL: {url}")
-        related_data = {}
-    
-    # add the site name and product name to the related product data and return as a DataFrame
-    related_data['site'] = url.split('.')[1]
-    related_data['product'] = product_name
-    related_df = pd.DataFrame(related_data)
-    return related_df
-
-# retrieves the availability of a product for a given website
-def get_product_availability(product_name, url):
-    # determine the site and call the appropriate function to scrape the store availability data
-    if 'amazon' in url:
-        availability_data = {}
-    elif 'walmart' in url:
-        html = get_html(url)
-        availability_data = parse_walmart_availability(html)
-    elif 'bestbuy' in url:
-        html = get_html(url)
-        availability_data = parse_bestbuy_availability(html)
-    else:
-        print(f"Unsupported URL: {url}")
-        availability_data = {}
-    
-    # add the site name and product name to the store availability data and return as a DataFrame
-    availability_data['site'] = url.split('.')[1]
-    availability_data['product'] = product_name
-    availability_df = pd.DataFrame([availability_data])
-    return availability_df
-
-
-# Tests
-def main():
-    # test the scrape_product function
-    amazon_data = scrape_product('iPhone 13', 'https://www.amazon.com/s?k=iPhone+13')
-    print(amazon_data)
-    walmart_data = scrape_product('iPhone 13', 'https://www.walmart.com/search?q=iPhone+13')
-    print(walmart_data)
-    bestbuy_data = scrape_product('iPhone 13', 'https://www.bestbuy.com/site/searchpage.jsp?st=iPhone+13')
-    print(bestbuy_data)
-    
-    # test the compare function
-    compare('iPhone 13')
-    '''
-    This will scrape the product data for the iPhone 13 on Amazon, Walmart, and Best Buy, extract the price data, print the prices for each site, and determine which site has the lowest price. 
-    NOTE: This function assumes that the first search result on each site corresponds to the desired product. Since this may not always be the case, we will want to modify the code in future updates.
-    '''
-
-    # test usage of `get_product_reviews`
-    amazon_reviews = get_product_reviews('iPhone 13', 'https://www.amazon.com/dp/B09G9P3WVR')
-    print(amazon_reviews.head())
-
-    # test usage of `get_related_products`
-    walmart_related = get_related_products('Apple Watch Series 7', 'https://www.walmart.com/ip/Apple-Watch-Series-7-GPS-41mm-Product-RED-Aluminum-Case-with-PRODUCT-RED-Sport-Band/657943300')
-    print(walmart_related.head())
-
-    # test usage of `get_product_availability`
-    bestbuy_availability = get_product_availability('Nintendo Switch OLED', 'https://www.bestbuy.com/site/nintendo-switch-oled-model-blue-yellow-red/6471322.p?skuId=6471322')
-    print(bestbuy_availability)
-
-if __name__ == '__main__':
-    main()
-
-
+        return f"Scraper not available for `{company_name}`. Try: eBay, Walmart, or Amazon."
