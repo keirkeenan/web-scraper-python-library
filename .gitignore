@@ -105,3 +105,4 @@ dist
 
 # other files
 .coverage
+__pycache__/

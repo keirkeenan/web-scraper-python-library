@@ -76,7 +76,7 @@ dist-check:
 dist: clean build dist-build dist-check  ## Build dists
 
 publish:  # Upload python assets
-	echo "would usually run python -m twine upload dist/* --skip-existing"
+	echo "would usually run python3 -m twine upload dist/* --skip-existing"
 
 #########
 # CLEAN #
