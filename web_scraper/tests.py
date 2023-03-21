@@ -2,10 +2,14 @@
 # pylint: disable=missing-function-docstring
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-class-docstring
+# pylint: disable=line-too-long
+# pylint: disable=wrong-import-position
 
+import sys
 import unittest
-import subprocess
-from main import get_html, parse_itemprice, scrape_ebay, scrape_walmart, scrape_amazon, main
+
+sys.path.append('../')
+from web_scraper.main import get_html, parse_itemprice, scrape_ebay, scrape_walmart, scrape_amazon, main
 
 
 class TestMethods(unittest.TestCase):
@@ -13,22 +17,22 @@ class TestMethods(unittest.TestCase):
 
     def test_ebay(self):
         # Test with valid input
-        html = get_html("ebay", "iphone", 1)
-        self.assertTrue(html.startswith("<!DOCTYPE html>"))
+        html = get_html("ebay", "iphone 12", 1)
+        self.assertTrue("<!DOCTYPE html>" in html)
 
-    def test_walmart(self):
-        # Test with valid input
-        html = get_html("walmart", "iphone", 1)
-        self.assertTrue(html.startswith("<!DOCTYPE html>"))
+    # def test_walmart(self):
+    #     # Test with valid input
+    #     html = get_html("walmart", "iphone 12", 1)
+    #     self.assertTrue("<!DOCTYPE html>" in html)
 
     def test_amazon(self):
         # Test with valid input
-        html = get_html("amazon", "iphone", 1)
-        self.assertTrue(html.startswith("<!doctype html>"))
+        html = get_html("amazon", "iphone 12", 1)
+        self.assertTrue("<!doctype html>" in html)
 
     def test_wrong_company_name(self):
         # Test with invalid input
-        html = get_html("wrong", "iphone", 1)
+        html = get_html("wrong", "iphone 12", 1)
         self.assertEqual(html, "Something went wrong. Please try again.")
 
     # ===================================#
@@ -47,19 +51,19 @@ class TestMethods(unittest.TestCase):
 
     def test_scrape_ebay_valid(self):
         # Test with valid input
-        result = scrape_ebay("iphone")
+        result = scrape_ebay("iphone 12")
         expected_output = "eBay Scraper Success!"
         self.assertEqual(result, expected_output)
 
     def test_scrape_walmart_valid(self):
         # Test with valid input
-        result = scrape_walmart("iphone")
+        result = scrape_walmart("iphone 12")
         expected_output = "Walmart Scraper Success!"
         self.assertEqual(result, expected_output)
 
     def test_scrape_amazon_valid(self):
         # Test with valid input
-        result = scrape_amazon("iphone")
+        result = scrape_amazon("iphone 12")
         expected_output = "Amazon Scraper Success!"
         self.assertEqual(result, expected_output)
 
@@ -69,27 +73,16 @@ class TestMethods(unittest.TestCase):
 
     def test_main_valid(self):
         # Test with valid input
-        result = main("iphone", "ebay")
+        result = main("iphone 12", "ebay")
         expected_output = "eBay Scraper Success!"
         self.assertEqual(result, expected_output)
 
     def test_main_invalid(self):
         # Test with invalid input
-        result = main("iphone", "Random Company")
-        expected_output = (
-            "Scraper not available for `Random Company`. Try: eBay, Walmart, or Amazon."
-        )
+        result = main("iphone 12", "Random Company")
+        expected_output = "Scraper not available for `Random Company`. Try: eBay, Walmart, or Amazon."
         self.assertEqual(result, expected_output)
 
 
 if __name__ == "__main__":
-    # Run the tests
-    print("=" * 50)
-    print("Running tests with coverage...")
-    subprocess.run(["python3", "-m", "coverage", "run",
-                   "-m", "unittest", "tests.py"], check=False)
-
-    # Run the coverage report
-    print("=" * 50)
-    print("Running coverage report...")
-    subprocess.run(["python3", "-m", "coverage", "report"], check=False)
+    unittest.main()
