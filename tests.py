@@ -4,8 +4,16 @@
 # pylint: disable=missing-class-docstring
 
 import unittest
-import subprocess
-from main import get_html, parse_itemprice, scrape_ebay, scrape_walmart, scrape_amazon, main
+
+# import subprocess
+from main import (
+    get_html,
+    parse_itemprice,
+    scrape_ebay,
+    scrape_walmart,
+    scrape_amazon,
+    main,
+)
 
 
 class TestMethods(unittest.TestCase):
@@ -83,13 +91,4 @@ class TestMethods(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # Run the tests
-    print("=" * 50)
-    print("Running tests with coverage...")
-    subprocess.run(["python3", "-m", "coverage", "run",
-                   "-m", "unittest", "tests.py"], check=False)
-
-    # Run the coverage report
-    print("=" * 50)
-    print("Running coverage report...")
-    subprocess.run(["python3", "-m", "coverage", "report"], check=False)
+    unittest.main()

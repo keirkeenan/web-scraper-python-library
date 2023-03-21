@@ -12,7 +12,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-'''This function gets the html from the website'''
+"""This function gets the html from the website"""
 
 
 def get_html(company_name, product_name, page_number):
@@ -23,14 +23,14 @@ def get_html(company_name, product_name, page_number):
         url = url_product + url_page
 
         # download the html
-        req = requests.get(url)
+        req = requests.get(url, timeout=5)
         html = req.text
 
         return html
 
     elif company_name == "walmart":
         # build the url
-        url_product = f"https: // www.walmart.com / search?q = {product_name}"
+        url_product = f"https://www.walmart.com/search?q={product_name}"
         url_page = f"&page={page_number}&affinityOverride=default"
         url = url_product + url_page
         ac1 = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
@@ -49,7 +49,7 @@ def get_html(company_name, product_name, page_number):
         }
 
         # download the html
-        req = requests.get(url, headers=headers)
+        req = requests.get(url, headers=headers, timeout=5)
         html = req.text
 
         return html
@@ -73,7 +73,7 @@ def get_html(company_name, product_name, page_number):
         }
 
         # download the html
-        req = requests.get(url, headers=headers)
+        req = requests.get(url, headers=headers, timeout=5)
         html = req.text
 
         return html
@@ -82,7 +82,7 @@ def get_html(company_name, product_name, page_number):
         return "Something went wrong. Please try again."
 
 
-'''This is the parse_itemprice function that will parse the price of the item'''
+"""This is the parse_itemprice function that will parse the price of the item"""
 
 
 def parse_itemprice(text):
@@ -92,13 +92,13 @@ def parse_itemprice(text):
     text = text.replace(",", "")
     start = text.find("$")
     end = text.find(".")
-    price_str = text[start + 1: end]
-    price_str += text[end: end + 3]
+    price_str = text[start + 1 : end]
+    price_str += text[end : end + 3]
     price = float(price_str)
     return price
 
 
-'''eBay web scraper'''
+"""eBay web scraper"""
 
 
 def scrape_ebay(product_name):
@@ -110,12 +110,7 @@ def scrape_ebay(product_name):
         time.sleep(random.randint(1, 6))
 
         # get the html & process it
-        soup = BeautifulSoup(
-            get_html(
-                "ebay",
-                product_name,
-                page_number),
-            "html.parser")
+        soup = BeautifulSoup(get_html("ebay", product_name, page_number), "html.parser")
 
         # loop over the items in the page
         tags_items = soup.select(".s-item")
@@ -146,7 +141,7 @@ def scrape_ebay(product_name):
 
     # write the json to a file
     product = product_name.replace(" ", "_")
-    filename_json = f"{product}_ebay_{datetime.date.today()}.json"
+    filename_json = f"scraped_data/{product}_ebay_{datetime.date.today()}.json"
     with open(filename_json, "w", encoding="ascii") as file:
         file.write(json.dumps(items, indent=2))
 
@@ -166,7 +161,7 @@ def scrape_ebay(product_name):
         return "Failed to create JSON file for eBay data."
 
 
-'''Walmart web scraper'''
+"""Walmart web scraper"""
 
 
 def scrape_walmart(product_name):
@@ -185,8 +180,7 @@ def scrape_walmart(product_name):
         soup = BeautifulSoup(html, "html.parser")
 
         # loop over the items in the page
-        products = soup.find_all(
-            "div", class_="mb1 ph1 pa0-xl bb b--near-white w-25")
+        products = soup.find_all("div", class_="mb1 ph1 pa0-xl bb b--near-white w-25")
 
         for product in products:
             try:
@@ -196,8 +190,7 @@ def scrape_walmart(product_name):
             except AttributeError:
                 name = None
             try:
-                price = product.find("div",
-                                     {"data-automation-id": "product-price"})
+                price = product.find("div", {"data-automation-id": "product-price"})
                 price = price.find("span", class_="w_iUH7").text
                 price = parse_itemprice(price)
             except AttributeError:
@@ -216,7 +209,7 @@ def scrape_walmart(product_name):
 
     # write the json to a file
     product = product_name.replace(" ", "_")
-    filename_json = f"{product}_walmart_{datetime.date.today()}.json"
+    filename_json = f"scraped_data/{product}_walmart_{datetime.date.today()}.json"
     with open(filename_json, "w", encoding="ascii") as file:
         file.write(json.dumps(items, indent=2))
 
@@ -236,7 +229,7 @@ def scrape_walmart(product_name):
         return "Failed to create JSON file for Walmart data."
 
 
-'''Amazon web scraper'''
+"""Amazon web scraper"""
 
 
 def scrape_amazon(product_name):
@@ -263,7 +256,8 @@ def scrape_amazon(product_name):
         for product in products:
             try:
                 name = product.find(
-                    "span", class_="a-size-base-plus a-color-base a-text-normal").text
+                    "span", class_="a-size-base-plus a-color-base a-text-normal"
+                ).text
             except AttributeError:
                 name = None
             try:
@@ -291,7 +285,7 @@ def scrape_amazon(product_name):
 
     # write the json to a file
     product = product_name.replace(" ", "_")
-    filename_json = f"{product}_amazon_{datetime.date.today()}.json"
+    filename_json = f"scraped_data/{product}_amazon_{datetime.date.today()}.json"
     with open(filename_json, "w", encoding="ascii") as file:
         file.write(json.dumps(items, indent=2))
 
@@ -311,7 +305,7 @@ def scrape_amazon(product_name):
         return "Failed to create JSON file for Amazon data."
 
 
-'''Main function that takes in the product name and company name'''
+"""Main function that takes in the product name and company name"""
 
 
 def main(product_name, company_name):
