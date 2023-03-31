@@ -6,6 +6,7 @@ A Python library that lets you easily scrape data from popular websites using ba
 [![](https://img.shields.io/github/issues/keirkeenan/web-scraper-python-library)](https://github.com/keirkeenan/web-scraper-python-library/issues)
 [![Build Status](https://github.com/keirkeenan/web-scraper-python-library/actions/workflows/build.yml/badge.svg)](https://github.com/keirkeenan/web-scraper-python-library/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/keirkeenan/web-scraper-python-library/branch/main/graph/badge.svg)](https://codecov.io/gh/keirkeenan/web-scraper-python-library)
+[![PyPI](https://img.shields.io/pypi/v/web-scraper-python-library)](https://pypi.org/project/web-scraper-python-library/)
 
 ## Overview
 
