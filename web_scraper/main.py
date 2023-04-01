@@ -103,6 +103,8 @@ def parse_itemprice(text):
 
 
 def scrape_ebay(product_name):
+    print("Scraping eBay...")
+
     items = []
 
     # loop over the eBay webpages (3 pages)
@@ -156,15 +158,19 @@ def scrape_ebay(product_name):
 
     # Check if the file is not empty
     if data is not None:
-        return "eBay Scraper Success!"
+        print("eBay Scraper Success!")
+        time.sleep(2)
+        return data
     else:
-        return "Failed to create JSON file for eBay data."
+        return "Failed to collect data from eBay."
 
 
 """Walmart web scraper"""
 
 
 def scrape_walmart(product_name):
+    print("Scraping Walmart...")
+
     items = []
 
     # loop over the Walmart webpages (3 pages)
@@ -220,15 +226,19 @@ def scrape_walmart(product_name):
 
     # Check if the file is not empty
     if data is not None:
-        return "Walmart Scraper Success!"
+        print("Walmart Scraper Success!")
+        time.sleep(2)
+        return data
     else:
-        return "Failed to create JSON file for Walmart data."
+        return "Failed to collect data from Walmart."
 
 
 """Amazon web scraper"""
 
 
 def scrape_amazon(product_name):
+    print("Scraping Amazon...")
+    
     items = []
 
     # loop over the Amazon webpages (3 pages)
@@ -287,15 +297,17 @@ def scrape_amazon(product_name):
 
     # Check if the file is not empty
     if data is not None:
-        return "Amazon Scraper Success!"
+        print("Amazon Scraper Success!")
+        time.sleep(2)
+        return data
     else:
-        return "Failed to create JSON file for Amazon data."
+        return "Failed to collect data from Amazon."
 
 
 """Main function that takes in the product name and company name"""
 
 
-def main(product_name, company_name):
+def scrape(product_name, company_name):
     # scrape the websites
     if company_name.lower() == "ebay":
         return scrape_ebay(product_name)

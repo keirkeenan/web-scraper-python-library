@@ -33,9 +33,9 @@ The following code will retrieve and print the product data for an `iphone 12` f
 #### Code
 
 ```python
-from web_scraper_python_library import main as m
+from web_scraper import main as m
 
-product_data = m.main(product = 'iphone 12', company = 'Amazon')
+product_data = m.scrape('iphone 12', 'Amazon')  # scrape(product, company)
 print(product_data)
 ```
 

@@ -8,7 +8,7 @@ build-backend="setuptools.build_meta"
 
 [project]
 name = "web-scraper-python-library"
-authors = [{name = "Your Name", email = "Your_Email@gmail.com"}]
+authors = [{name = "Keir Keenan", email = ""}]
 description="A Python library for web scraping"
 readme = "README.md"
 version = "0.1.1"
