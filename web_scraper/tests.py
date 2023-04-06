@@ -9,7 +9,7 @@ import sys
 import unittest
 
 sys.path.append('../')
-from web_scraper.main import get_html, parse_itemprice, scrape_ebay, scrape_walmart, scrape_amazon, main
+from web_scraper.main import get_html, parse_itemprice, scrape_ebay, scrape_walmart, scrape_amazon, scrape
 
 
 class TestMethods(unittest.TestCase):
@@ -52,20 +52,21 @@ class TestMethods(unittest.TestCase):
     def test_scrape_ebay_valid(self):
         # Test with valid input
         result = scrape_ebay("iphone 12")
-        expected_output = "eBay Scraper Success!"
-        self.assertEqual(result, expected_output)
+        not_expected_output = "Failed to collect data from eBay. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
+
+        self.assertNotEqual(result, not_expected_output)
 
     def test_scrape_walmart_valid(self):
         # Test with valid input
         result = scrape_walmart("iphone 12")
-        expected_output = "Walmart Scraper Success!"
-        self.assertEqual(result, expected_output)
+        not_expected_output = "Failed to collect data from Walmart. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
+        self.assertNotEqual(result, not_expected_output)
 
     def test_scrape_amazon_valid(self):
         # Test with valid input
         result = scrape_amazon("iphone 12")
-        expected_output = "Amazon Scraper Success!"
-        self.assertEqual(result, expected_output)
+        not_expected_output = "Failed to collect data from Amazon. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
+        self.assertNotEqual(result, not_expected_output)
 
     # ===================================#
 
@@ -73,13 +74,13 @@ class TestMethods(unittest.TestCase):
 
     def test_main_valid(self):
         # Test with valid input
-        result = main("iphone 12", "ebay")
-        expected_output = "eBay Scraper Success!"
-        self.assertEqual(result, expected_output)
+        result = scrape("iphone 12", "ebay")
+        not_expected_output = "Failed to collect data from eBay."
+        self.assertNotEqual(result, not_expected_output)
 
     def test_main_invalid(self):
         # Test with invalid input
-        result = main("iphone 12", "Random Company")
+        result = scrape("iphone 12", "Random Company")
         expected_output = "Scraper not available for `Random Company`. Try: eBay, Walmart, or Amazon."
         self.assertEqual(result, expected_output)
 

@@ -44,12 +44,14 @@ print(product_data)
 ```json
 [
   {
+    "company": "Amazon",
     "name": "Apple iPhone 12, 64GB, Green - Fully Unlocked (Renewed)",
     "price": 390.0,
     "extraction_date": "2023-03-23 17:38:32"
   },
   ...
   {
+    "company": "Amazon",
     "name": "Apple iPhone 12 Mini, 64GB, Black - Unlocked (Renewed)",
     "price": 312.0,
     "extraction_date": "2023-03-23 17:38:32"

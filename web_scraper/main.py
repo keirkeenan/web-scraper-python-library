@@ -103,6 +103,8 @@ def parse_itemprice(text):
 
 
 def scrape_ebay(product_name):
+    print("Scraping eBay...")
+
     items = []
 
     # loop over the eBay webpages (3 pages)
@@ -128,43 +130,36 @@ def scrape_ebay(product_name):
             for tag in tag_item.select(".s-item__subtitle"):
                 status = tag.text
 
-            item = {
-                "name": name,
-                "price": price,
-                "status": status,
-                "extraction_date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            }
-            items.append(item)
+            if name is not None and price is not None:
+                item = {
+                    "company": "eBay",
+                    "name": name,
+                    "price": price,
+                    "status": status,
+                    "extraction_date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                }
+                items.append(item)
 
         # print(f'Total Items on page {page_number}/3: {len(tags_items)}')
 
     # write json to stdout
     data = json.dumps(items, indent=2)
 
-    # write the json to a file
-    # product = product_name.replace(" ", "_")
-    # filename_json = f"scraped_data/{product}_ebay_{datetime.date.today()}.json"
-    # with open(filename_json, "w", encoding="ascii") as file:
-    #     data = file.write(json.dumps(items, indent=2))
-
-    """
-    # write the html to a file
-    filename_html = f'{product}_ebay_{datetime.date.today()}.json'
-    with open(filename_html, 'w', encoding='ascii') as file:
-        file.write(str(soup.prettify()))
-    """
-
     # Check if the file is not empty
-    if data is not None:
-        return "eBay Scraper Success!"
+    if len(data) > 2:
+        print("eBay Scraper Success!")
+        time.sleep(2)
+        return data
     else:
-        return "Failed to create JSON file for eBay data."
+        return "Failed to collect data from eBay. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
 
 
 """Walmart web scraper"""
 
 
 def scrape_walmart(product_name):
+    print("Scraping Walmart...")
+
     items = []
 
     # loop over the Walmart webpages (3 pages)
@@ -180,55 +175,48 @@ def scrape_walmart(product_name):
         soup = BeautifulSoup(html, "html.parser")
 
         # loop over the items in the page
-        products = soup.find_all("div", class_="mb1 ph1 pa0-xl bb b--near-white w-25")
+        products = soup.find_all("div", class_="sans-serif mid-gray relative flex flex-column w-100 hide-child-opacity")
 
         for product in products:
             try:
-                name = product.find("span", class_="normal dark-gray mb0 mt1 lh-title f6 f5-l").text
+                name = product.find("span", class_="w_V_DM").text
             except AttributeError:
                 name = None
             try:
-                price = product.find("div", class_="mr1 mr2-xl b black lh-copy f5 f4-l").text
+                price = product.find("div", class_="mr1 mr2-xl b black green lh-copy f5 f4-l").text
                 price = parse_itemprice(price)
             except AttributeError:
                 price = None
 
-            item = {
-                "name": name,
-                "price": price,
-                "extraction_date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            }
-            items.append(item)
+            if name is not None and price is not None:
+                item = {
+                    "company": "Walmart",
+                    "name": name,
+                    "price": price,
+                    "extraction_date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                }
+                items.append(item)
 
         # print(f'Total Items on page {page_number}/3: {len(products)}')
 
     # write json to stdout
     data = json.dumps(items, indent=2)
 
-    # write the json to a file
-    # product = product_name.replace(" ", "_")
-    # filename_json = f"scraped_data/{product}_walmart_{datetime.date.today()}.json"
-    # with open(filename_json, "w", encoding="ascii") as file:
-    #     data = file.write(json.dumps(items, indent=2))
-
-    """
-    # write the html to a file
-    filename_html = f'{product_name}_walmart_{datetime.date.today()}.html'
-    with open(filename_html, "w") as f:
-        f.write(str(soup.prettify()))
-    """
-
     # Check if the file is not empty
-    if data is not None:
-        return "Walmart Scraper Success!"
+    if len(data) > 2:
+        print("Walmart Scraper Success!")
+        time.sleep(2)
+        return data
     else:
-        return "Failed to create JSON file for Walmart data."
+        return "Failed to collect data from Walmart. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
 
 
 """Amazon web scraper"""
 
 
 def scrape_amazon(product_name):
+    print("Scraping Amazon...")
+
     items = []
 
     # loop over the Amazon webpages (3 pages)
@@ -260,42 +248,33 @@ def scrape_amazon(product_name):
             except AttributeError:
                 price = None
 
-            item = {
-                "name": name,
-                "price": price,
-                "extraction_date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            }
-            items.append(item)
+            if name is not None and price is not None:
+                item = {
+                    "company": "Amazon",
+                    "name": name,
+                    "price": price,
+                    "extraction_date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                }
+                items.append(item)
 
         # print(f'Total Items on page {page_number}/3: {len(products)}')
 
     # write json to stdout
     data = json.dumps(items, indent=2)
 
-    # write the json to a file
-    # product = product_name.replace(" ", "_")
-    # filename_json = f"scraped_data/{product}_amazon_{datetime.date.today()}.json"
-    # with open(filename_json, "w", encoding="ascii") as file:
-    #     data = file.write(json.dumps(items, indent=2))
-
-    """
-    # write the html to a file
-    filename_html = f'{product_name}_amazon_{datetime.date.today()}.html'
-    with open(filename_html, "w") as f:
-        f.write(str(soup.prettify()))
-    """
-
     # Check if the file is not empty
-    if data is not None:
-        return "Amazon Scraper Success!"
+    if len(data) > 2:
+        print("Amazon Scraper Success!")
+        time.sleep(2)
+        return data
     else:
-        return "Failed to create JSON file for Amazon data."
+        return "Failed to collect data from Amazon. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
 
 
 """Main function that takes in the product name and company name"""
 
 
-def main(product_name, company_name):
+def scrape(product_name, company_name):
     # scrape the websites
     if company_name.lower() == "ebay":
         return scrape_ebay(product_name)
