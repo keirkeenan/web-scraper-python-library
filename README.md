@@ -24,7 +24,7 @@ pip install web-scraper-python-library
 
 ### Product Search
 
-The following code will retrieve and print the product data for an `iphone 12` from `Amazon` as a JSON object.
+The following code will retrieve and print the product data for an `pencil` from `Amazon` as a JSON object.
 
 `product`: a product name, like you would put into the product search page of a company's website
 
@@ -35,7 +35,7 @@ The following code will retrieve and print the product data for an `iphone 12` f
 ```python
 from web_scraper_python_library import main as m
 
-product_data = m.main(product = 'iphone 12', company = 'Amazon')
+product_data = m.main(product = 'pencil', company = 'Amazon')
 print(product_data)
 ```
 
@@ -45,15 +45,15 @@ print(product_data)
 [
   {
     "company": "Amazon",
-    "name": "Apple iPhone 12, 64GB, Green - Fully Unlocked (Renewed)",
-    "price": 390.0,
+    "name": "Staedtler 0.5mm Mechanical Pencil Silver Series (925 25-05)",
+    "price": 11.0,
     "extraction_date": "2023-03-23 17:38:32"
   },
   ...
   {
     "company": "Amazon",
-    "name": "Apple iPhone 12 Mini, 64GB, Black - Unlocked (Renewed)",
-    "price": 312.0,
+    "name": "Pica Dry Bundle (1 x 3030 Pencil + 1 x 4050 Refill) in Blister Packaging",
+    "price": 21.0,
     "extraction_date": "2023-03-23 17:38:32"
   }
 ]

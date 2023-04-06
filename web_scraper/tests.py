@@ -17,7 +17,7 @@ class TestMethods(unittest.TestCase):
 
     def test_ebay(self):
         # Test with valid input
-        html = get_html("ebay", "iphone 12", 1)
+        html = get_html("ebay", "pencil", 1)
         self.assertTrue("<!DOCTYPE html>" in html)
 
     # def test_walmart(self):
@@ -27,12 +27,12 @@ class TestMethods(unittest.TestCase):
 
     def test_amazon(self):
         # Test with valid input
-        html = get_html("amazon", "iphone 12", 1)
+        html = get_html("amazon", "pencil", 1)
         self.assertTrue("<!doctype html>" in html)
 
     def test_wrong_company_name(self):
         # Test with invalid input
-        html = get_html("wrong", "iphone 12", 1)
+        html = get_html("wrong", "pencil", 1)
         self.assertEqual(html, "Something went wrong. Please try again.")
 
     # ===================================#
@@ -51,20 +51,20 @@ class TestMethods(unittest.TestCase):
 
     def test_scrape_ebay_valid(self):
         # Test with valid input
-        result = scrape_ebay("iphone 12")
+        result = scrape_ebay("pencil")
         not_expected_output = "Failed to collect data from eBay. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
 
         self.assertNotEqual(result, not_expected_output)
 
     def test_scrape_walmart_valid(self):
         # Test with valid input
-        result = scrape_walmart("iphone 12")
+        result = scrape_walmart("pencil")
         not_expected_output = "Failed to collect data from Walmart. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
         self.assertNotEqual(result, not_expected_output)
 
     def test_scrape_amazon_valid(self):
         # Test with valid input
-        result = scrape_amazon("iphone 12")
+        result = scrape_amazon("pencil")
         not_expected_output = "Failed to collect data from Amazon. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
         self.assertNotEqual(result, not_expected_output)
 
@@ -74,13 +74,13 @@ class TestMethods(unittest.TestCase):
 
     def test_main_valid(self):
         # Test with valid input
-        result = scrape("iphone 12", "ebay")
+        result = scrape("pencil", "ebay")
         not_expected_output = "Failed to collect data from eBay."
         self.assertNotEqual(result, not_expected_output)
 
     def test_main_invalid(self):
         # Test with invalid input
-        result = scrape("iphone 12", "Random Company")
+        result = scrape("pencil", "Random Company")
         expected_output = "Scraper not available for `Random Company`. Try: eBay, Walmart, or Amazon."
         self.assertEqual(result, expected_output)
 

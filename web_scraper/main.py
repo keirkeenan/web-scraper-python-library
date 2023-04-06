@@ -140,8 +140,6 @@ def scrape_ebay(product_name):
                 }
                 items.append(item)
 
-        # print(f'Total Items on page {page_number}/3: {len(tags_items)}')
-
     # write json to stdout
     data = json.dumps(items, indent=2)
 
@@ -196,8 +194,6 @@ def scrape_walmart(product_name):
                     "extraction_date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 }
                 items.append(item)
-
-        # print(f'Total Items on page {page_number}/3: {len(products)}')
 
     # write json to stdout
     data = json.dumps(items, indent=2)
@@ -256,8 +252,6 @@ def scrape_amazon(product_name):
                     "extraction_date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 }
                 items.append(item)
-
-        # print(f'Total Items on page {page_number}/3: {len(products)}')
 
     # write json to stdout
     data = json.dumps(items, indent=2)
