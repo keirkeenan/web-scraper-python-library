@@ -278,3 +278,18 @@ def scrape(product_name, company_name):
         return scrape_amazon(product_name)
     else:
         return f"Scraper not available for `{company_name}`. Try: eBay, Walmart, or Amazon."
+
+def scrape_all(product_name)
+    ret = {}
+    COMPANIES = ['eBay', 'Walmart', 'Amazon']
+
+    for company in COMPANIES:
+        if company == 'eBay':
+            ret['eBay'] = scrape_ebay(product_name)
+        elif company == 'Walmart':
+            ret['Walmart'] = scrape_walmart(product_name)
+        elif company == 'Amazon':
+            ret['Amazon'] = scrape_amazon(product_name)
+        else:
+            pass
+    return ret
