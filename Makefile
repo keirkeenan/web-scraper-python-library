@@ -39,10 +39,10 @@ annotate:  ## run type checking
 # TESTS #
 #########
 test: ## clean and run unit tests
-	python -m unittest -v web_scraper/tests.py
+	python -m unittest -v web_scraper/tests/test_all.py
 
 coverage:  ## clean and run unit tests with coverage
-	python -m coverage run -m unittest web_scraper/tests.py
+	python -m coverage run -m unittest web_scraper/tests/test_all.py
 	python -m coverage report
 
 # Alias

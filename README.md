@@ -33,9 +33,11 @@ The following code will retrieve and print the product data for an `iphone 12` f
 #### Code
 
 ```python
-from web_scraper_python_library import main as m
+from web_scraper import main as m
+import json
 
-product_data = m.main(product = 'iphone 12', company = 'Amazon')
+json_product_data = m.scrape("iphone 12", "Amazon")
+product_data = json.loads(json_product_data)
 print(product_data)
 ```
 
@@ -44,12 +46,14 @@ print(product_data)
 ```json
 [
   {
+    "company": "Amazon",
     "name": "Apple iPhone 12, 64GB, Green - Fully Unlocked (Renewed)",
     "price": 390.0,
     "extraction_date": "2023-03-23 17:38:32"
   },
   ...
   {
+    "company": "Amazon",
     "name": "Apple iPhone 12 Mini, 64GB, Black - Unlocked (Renewed)",
     "price": 312.0,
     "extraction_date": "2023-03-23 17:38:32"
