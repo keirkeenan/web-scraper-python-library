@@ -7,7 +7,7 @@
 
 import unittest
 from unittest.mock import patch
-from web_scraper.main import get_html, parse_itemprice, scrape_ebay, scrape_walmart, scrape_amazon, scrape
+from web_scraper.main import get_html, parse_itemprice, scrape_ebay, scrape_walmart, scrape_amazon, scrape, scrape_all
 
 
 class TestMethods(unittest.TestCase):
@@ -86,6 +86,16 @@ class TestMethods(unittest.TestCase):
         result = scrape("pencil", "Random Company")
         expected_output = "Scraper not available for `Random Company`. Try: eBay, Walmart, or Amazon."
         self.assertEqual(result, expected_output)
+
+    # ===================================#
+
+    # Test the scrape_all function
+
+    def test_scrape_all_success(self):
+        # Test with valid input
+        result = scrape_all("pencil")
+        not_expected_output = "Failed to collect any data. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
+        self.assertNotEqual(result, not_expected_output)
 
 
 if __name__ == "__main__":

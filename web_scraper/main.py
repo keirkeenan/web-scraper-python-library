@@ -278,3 +278,40 @@ def scrape(product_name, company_name):
         return scrape_amazon(product_name)
     else:
         return f"Scraper not available for `{company_name}`. Try: eBay, Walmart, or Amazon."
+
+
+"""Function that takes in the product name and scrapes all available websites"""
+
+
+def scrape_all(product_name):
+    # scrape the websites
+    amazon = scrape_amazon(product_name)
+    walmart = scrape_walmart(product_name)
+    ebay = scrape_ebay(product_name)
+
+    # combine the json strings into a list
+    combined_list = []
+
+    if (
+        amazon
+        != "Failed to collect data from Amazon. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
+    ):
+        combined_list += json.loads(amazon)
+    if (
+        walmart
+        != "Failed to collect data from Walmart. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
+    ):
+        combined_list += json.loads(walmart)
+    if (
+        ebay
+        != "Failed to collect data from eBay. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
+    ):
+        combined_list += json.loads(ebay)
+
+    combined_json_string = json.dumps(combined_list, indent=2)
+
+    # Check if the file is not empty
+    if len(combined_json_string) > 2:
+        return combined_json_string
+    else:
+        return "Failed to collect any data. Please try again or post an issue on GitHub: https://github.com/keirkeenan/web-scraper-python-library/issues/new"
