@@ -103,6 +103,15 @@ def parse_itemprice(text):
 
 
 def scrape_ebay(product_name):
+    '''
+    This function scrapes the eBay website for the product name and returns the data in JSON format.
+
+    :param product_name: The name of the product to be scraped
+    :type product_name: str
+    :return: The data in JSON format
+    :rtype: str
+
+    '''
     print("Scraping eBay...")
 
     items = []
@@ -156,6 +165,15 @@ def scrape_ebay(product_name):
 
 
 def scrape_walmart(product_name):
+    '''
+    This function scrapes the Walmart website for the product name and returns the data in JSON format.
+
+    :param product_name: The name of the product to be scraped
+    :type product_name: str
+    :return: The data in JSON format
+    :rtype: str
+
+    '''
     print("Scraping Walmart...")
 
     items = []
@@ -211,6 +229,15 @@ def scrape_walmart(product_name):
 
 
 def scrape_amazon(product_name):
+    '''
+    This function scrapes the Amazon website for the product name and returns the data in JSON format.
+
+    :param product_name: The name of the product to be scraped
+    :type product_name: str
+    :return: The data in JSON format
+    :rtype: str
+
+    '''
     print("Scraping Amazon...")
 
     items = []
@@ -269,6 +296,18 @@ def scrape_amazon(product_name):
 
 
 def scrape(product_name, company_name):
+    '''
+    This function takes in the product name and company name and returns the data in JSON format.
+
+    :param product_name: The name of the product to be scraped
+    :type product_name: str
+    :param company_name: The name of the company to be scraped
+    :type company_name: str
+    :return: The data in JSON format
+    :rtype: str
+
+    '''
+
     # scrape the websites
     if company_name.lower() == "ebay":
         return scrape_ebay(product_name)
@@ -284,6 +323,16 @@ def scrape(product_name, company_name):
 
 
 def scrape_all(product_name):
+    '''
+    This function takes in the product name and scrapes all available websites.
+
+    :param product_name: The name of the product to be scraped
+    :type product_name: str
+    :return: The data in JSON format
+    :rtype: str
+
+    '''
+
     # scrape the websites
     amazon = scrape_amazon(product_name)
     walmart = scrape_walmart(product_name)
