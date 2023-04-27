@@ -10,7 +10,7 @@ The following code will search **Walmart's** wesbite for **hiking shoes**:
 from web_scraper import main as m
 import json
 
-json_product_data = m.scrape("hiking", "Walmart")
+json_product_data = m.scrape("hiking shoes", "Walmart")
 product_data = json.loads(json_product_data)
 print(product_data)
 ```
