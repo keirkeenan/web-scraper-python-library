@@ -13,10 +13,20 @@ import requests
 from bs4 import BeautifulSoup
 
 
-"""This function gets the html from the website"""
-
-
 def get_html(company_name, product_name, page_number):
+    '''
+    This function gets the html from the website.
+
+    :param company_name: The name of the company to be scraped
+    :type company_name: str
+    :param product_name: The name of the product to be scraped
+    :type product_name: str
+    :param page_number: The page number of the website to be scraped
+    :type page_number: int
+    :return: The html of the website
+    :rtype: str
+
+    '''
     if company_name == "ebay":
         # build the url
         url_product = f"https://www.ebay.com/sch/i.html?_from=R40&_nkw={product_name}"
@@ -58,18 +68,18 @@ def get_html(company_name, product_name, page_number):
     elif company_name == "amazon":
         # build the url
         url = f"https://www.amazon.com/s?k={product_name}&page={page_number}"
-        ac1 = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
-        ac2 = "image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+        ac1 = "text/html,application/xhtml+xml,application/xml;q=0.9,/;q=0.8"
+        ac2 = "gzip, deflate, br"
         acc = ac1 + ac2
         user_agent1 = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-        user_agent2 = "(KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+        user_agent2 = "(KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         user_agent = user_agent1 + user_agent2
         headers = {
             "Referer": "https://www.google.com",
-            "Connection": "Keep-Alive",
-            "Accept-Language": "en-US,en;q=0.9",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Accept": acc,
+            "Connection": "keep-alive",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": acc,
+            "Accept": ac1,
             "User-Agent": user_agent,
         }
 
@@ -83,10 +93,16 @@ def get_html(company_name, product_name, page_number):
         return "Something went wrong. Please try again."
 
 
-"""This is the parse_itemprice function that will parse the price of the item"""
-
-
 def parse_itemprice(text):
+    '''
+    This function parses the price of the item.
+
+    :param text: The text to be parsed
+    :type text: str
+    :return: The price of the item
+    :rtype: float
+
+    '''
     start = 0
     end = 0
     price_str = ""
@@ -260,9 +276,16 @@ def scrape_amazon(product_name):
             class_="a-section a-spacing-small puis-padding-left-small puis-padding-right-small",
         )
 
+        # loop over all products with <div data-asin="...">
+        products = soup.find_all("div", {"data-asin": True})
+
         for product in products:
             try:
-                name = product.find("span", class_="a-size-base-plus a-color-base a-text-normal").text
+                asin = product["data-asin"]
+            except AttributeError:
+                asin = None
+            try:
+                name = product.find("span", class_="a-size-medium a-color-base a-text-normal").text
             except AttributeError:
                 name = None
             try:
@@ -270,13 +293,40 @@ def scrape_amazon(product_name):
                 price = parse_itemprice(price)
             except AttributeError:
                 price = None
+            try:
+                rating = product.find("span", class_="a-icon-alt").text
+            except AttributeError:
+                rating = None
+            try:
+                num_ratings = product.find("span", class_="a-size-base s-underline-text").text
+                num_ratings = float(num_ratings.replace(",", "").replace(" ratings", ""))
+            except AttributeError:
+                num_ratings = None
+            try:
+                image_url = product.find("img")["src"]
+            except (TypeError, AttributeError):
+                image_url = None
+            try:
+                url = (
+                    "https://www.amazon.com"
+                    + product.find(
+                        "a", class_="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal"
+                    )["href"]
+                )
+            except (TypeError, AttributeError):
+                url = None
 
             if name is not None and price is not None:
                 item = {
                     "company": "Amazon",
+                    "asin": asin,
                     "name": name,
                     "price": price,
                     "extraction_date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "rating": rating,
+                    "num_ratings": num_ratings,
+                    "image_url": image_url,
+                    "url": url,
                 }
                 items.append(item)
 
