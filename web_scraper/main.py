@@ -115,6 +115,25 @@ def parse_itemprice(text):
     return price
 
 
+def parse_rating(text):
+    '''
+    This function parses the rating of the item.
+
+    :param text: The text to be parsed
+    :type text: str
+    :return: The rating of the item
+    :rtype: float
+
+    '''
+
+    end = 0
+    rating_str = ""
+    end = text.find(" out")
+    rating_str = text[:end]
+    rating = float(rating_str)
+    return rating
+
+
 """eBay web scraper"""
 
 
@@ -295,6 +314,7 @@ def scrape_amazon(product_name):
                 price = None
             try:
                 rating = product.find("span", class_="a-icon-alt").text
+                rating = parse_rating(rating)
             except AttributeError:
                 rating = None
             try:

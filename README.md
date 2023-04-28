@@ -52,7 +52,7 @@ print(product_data)
     "name": "TCL 10 5G UW 128GB Diamond Gray Smartphone (Verizon) (Renewed)",
     "price": 84.0,
     "extraction_date": "2023-04-27 16:59:56",
-    "rating": "3.8 out of 5 stars",
+    "rating": 3.8,
     "num_ratings": 106.0,
     "image_url": "https://m.media-amazon.com/images/I/41e-4yZQl9L._AC_UY218_.jpg",
     "url": "https://www.amazon.com/TCL-Diamond-Smartphone-Verizon-Renewed/dp/B09HWS3VGM/ref=sr_1_42?keywords=iphone+12&qid=1682629195&sr=8-42"
@@ -64,7 +64,7 @@ print(product_data)
     "name": "QIMHAI Smartphone Unlocked Cell Phones S22 Ultra 6.1in HD Screen Cheap Phones 2GB/16GB Android 10 Straight Talk Phone 5000mAh 128GB Extension Dual Sim Boost Mobile Phones Telefonos (Gold)",
     "price": 79.99,
     "extraction_date": "2023-04-27 16:59:56",
-    "rating": "1.9 out of 5 stars",
+    "rating": 1.9,
     "num_ratings": 6.0,
     "image_url": "https://m.media-amazon.com/images/I/71fa-n5E69L._AC_UY218_.jpg",
     "url": "https://www.amazon.com/QIMHAI-Smartphone-Unlocked-Extension-Telefonos/dp/B0BS986JRZ/ref=sr_1_43?keywords=iphone+12&qid=1682629195&sr=8-43"
