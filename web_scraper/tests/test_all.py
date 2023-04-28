@@ -7,7 +7,16 @@
 
 import unittest
 from unittest.mock import patch
-from web_scraper.main import get_html, parse_itemprice, scrape_ebay, scrape_walmart, scrape_amazon, scrape, scrape_all
+from web_scraper.main import (
+    get_html,
+    parse_itemprice,
+    scrape_ebay,
+    scrape_walmart,
+    scrape_amazon,
+    scrape,
+    scrape_all,
+    parse_rating,
+)
 
 
 class TestMethods(unittest.TestCase):
@@ -41,6 +50,16 @@ class TestMethods(unittest.TestCase):
         # Test with valid input
         result = parse_itemprice("$123.45")
         expected_output = 123.45
+        self.assertEqual(result, expected_output)
+
+    # ===================================#
+
+    # Test the parse_rating function
+
+    def test_parse_rating_valid(self):
+        # Test with valid input
+        result = parse_rating("4.5 out of 5 stars")
+        expected_output = 4.5
         self.assertEqual(result, expected_output)
 
     # ===================================#
