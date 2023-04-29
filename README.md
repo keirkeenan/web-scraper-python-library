@@ -35,11 +35,12 @@ The following code will retrieve and print the product data for an `iphone 12` f
 
 ```python
 from web_scraper import main as m
-import json
 
 json_product_data = m.scrape("iphone 12", "Amazon")
-product_data = json.loads(json_product_data)
-print(product_data)
+
+# write json to file
+with open("amazon_product_data.json", "w") as file:
+    file.write(json_product_data)
 ```
 
 #### Output

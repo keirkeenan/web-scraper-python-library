@@ -162,17 +162,23 @@ def scrape_ebay(product_name):
         # loop over the items in the page
         tags_items = soup.select(".s-item")
         for tag_item in tags_items:
-            name = None
-            for tag in tag_item.select(".s-item__title"):
-                name = tag.text
+            try:
+                for tag in tag_item.select(".s-item__title"):
+                    name = tag.text
+            except AttributeError:
+                name = None
 
-            price = None
-            for tag in tag_item.select(".s-item__price"):
-                price = parse_itemprice(tag.text)
+            try:
+                for tag in tag_item.select(".s-item__price"):
+                    price = parse_itemprice(tag.text)
+            except (AttributeError, ValueError):
+                price = None
 
-            status = None
-            for tag in tag_item.select(".s-item__subtitle"):
-                status = tag.text
+            try:
+                for tag in tag_item.select(".s-item__subtitle"):
+                    status = tag.text
+            except AttributeError:
+                status = None
 
             if name is not None and price is not None:
                 item = {
@@ -236,7 +242,7 @@ def scrape_walmart(product_name):
             try:
                 price = product.find("div", class_="mr1 mr2-xl b black green lh-copy f5 f4-l").text
                 price = parse_itemprice(price)
-            except AttributeError:
+            except (AttributeError, ValueError):
                 price = None
 
             if name is not None and price is not None:
@@ -310,7 +316,7 @@ def scrape_amazon(product_name):
             try:
                 price = product.find("span", class_="a-offscreen").text
                 price = parse_itemprice(price)
-            except AttributeError:
+            except (AttributeError, ValueError):
                 price = None
             try:
                 rating = product.find("span", class_="a-icon-alt").text
